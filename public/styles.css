@@ -1,0 +1,211 @@
+:root {
+    --background-color: #110b0c;
+    --block-color: #1d181d;
+    --input-color: #3a3535;
+    --text-color: #ffe4d5;
+    --profile-size: 50px;
+    --font-size: 12pt;
+    --board-size: calc(var(--profile-size) * sqrt(100));
+    --border-radius: 5px;
+}
+@media only screen and (max-width: 600px) {
+    :root {
+        --profile-size: 30px;
+    }
+}
+body {
+    background-color: var(--background-color);
+    color: var(--text-color);
+    font-family: monospace;
+    font-size: var(--font-size);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin: 0;
+    height: 100vh;
+    align-items: center;
+}
+* {
+    box-sizing: border-box;
+}
+input, textarea {
+    background-color: var(--input-color);
+    color: var(--text-color);
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    outline: none;
+    resize: none;
+}
+button, input[type=file]::file-selector-button, .btn {
+    background-color: var(--input-color);
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    color: var(--text-color);
+    outline: none;
+    text-align: center;
+    font-weight: bold;
+    font-size: 10pt;
+}
+select {
+    background-color: var(--input-color);
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    color: var(--text-color);
+    outline: none;
+    text-align: center;
+    font-weight: bold;
+    font-size: 10pt;
+    text-align: left;
+}
+input[type=file] {
+    background: transparent;
+    padding: 0px;
+}
+h1 {
+    text-align: center;
+}
+header {
+    text-align: center;
+    margin: 20px;
+}
+
+.board {
+    --padding: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    align-content: baseline;
+    width: calc(var(--board-size) + var(--padding)*2);
+    height: calc(var(--board-size) + var(--padding)*2);
+    background-color: var(--block-color);
+    border-radius: var(--border-radius);
+    padding: var(--padding);
+    margin: 20px;
+}
+
+.profile {
+    background-color: var(--block-color);
+    width: var(--profile-size);
+    height: var(--profile-size);
+    position: relative;
+    display: flex;
+    
+}
+.profile__img {
+    width: 100%;
+    height: 100%;
+    border-radius: var(--border-radius);
+}
+.profile__info {
+    display: none;
+}
+.profile:hover .profile__info {
+    display: block;
+    position: absolute;
+    top: 25px;
+    left: 25px;
+    background-color: #161414ec;
+    width: 300px;
+    z-index: 10;
+    pointer-events: none;
+    border-radius: var(--border-radius);
+    padding: 20px;
+
+}
+.profile__info__title {
+    font-weight: bold;
+    font-size: 20pt;
+}
+.profile__info__img {
+    width: 100px;
+    height: 100px;
+    border-radius: var(--border-radius);
+}
+.form-profile {
+    background-color: var(--block-color);
+    display: flex;
+    flex-direction: column;
+    margin: auto;
+    width: 300px;
+    align-items: stretch;
+    padding: 20px;
+    border-radius: 5px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10;
+}
+.modal__shadow {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: #000000af;
+    content: "";
+    z-index: 1;
+    display: none;
+}
+.form-profile__title {
+    font-size: 15pt;
+    font-weight: bold;
+    align-self: center;
+    margin-bottom: 10px;
+    text-align: center;
+}
+.form-profile__entry {
+    padding: 10px;
+}
+.form-profile__entry > input, .form-profile__entry > textarea {
+    width: 100%;
+}
+.form-profile__submit-btn {
+    background-color: #2dcc75;
+    font-weight: bold;
+    align-self: center;
+}
+.error-msg {
+    color: #ff4848;
+    font-size: 10pt;
+    align-self: flex-start;
+    margin-left: 10px;
+}
+.add-btn {
+    background-color: var(--input-color);
+    width: var(--profile-size);
+    height: var(--profile-size);
+    border-radius: var(--border-radius);
+    text-align: center;
+    vertical-align: middle;
+    line-height: var(--profile-size);
+    font-size: var(--profile-size);
+    font-weight: bold;
+    user-select: none;
+    cursor: pointer;
+}
+.buttons {
+    display: flex;
+    justify-content: center;
+}
+.buttons > button, .buttons > .btn {
+    margin-left: 5px;
+    margin-right: 5px;
+    width: 80px;
+}
+#form-profile__modal-toggle {
+    display: none;
+}
+#form-profile__modal-toggle:checked~.form-profile {
+    display: block;
+}
+.modal {
+    display: none;
+}
+#form-profile__modal-toggle:checked~.modal__shadow {
+    display: block;
+}

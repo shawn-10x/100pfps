@@ -1,0 +1,44 @@
+services:
+  100pfps:
+    image: 100pfps-prod
+    build: 
+      dockerfile: ./backend/Dockerfile
+      context: .
+      args:
+        UNAME: ${UNAME}
+    container_name: 100pfps-prod
+    restart: unless-stopped
+    depends_on:
+      - db
+    environment:
+      - MODE=Release
+      - DATABASE_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@100pfps-db-prod/${POSTGRES_DB}
+
+  www:
+    image: 100pfps-www-prod
+    restart: unless-stopped
+    build:
+      dockerfile: ./www/Dockerfile
+      context: .
+    container_name: 100pfps-www-prod
+    depends_on:
+      - frontend
+      - backend
+    ports:
+      - 8080:80
+      - 8443:443
+
+  db:
+    image: docker.io/postgres:alpine
+    container_name: 100pfps-db-prod
+    restart: unless-stopped
+    volumes: 
+      - db:/var/lib/postgresql/data:Z
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+
+volumes:
+  db:
+    driver: local

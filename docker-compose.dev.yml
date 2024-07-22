@@ -1,0 +1,43 @@
+services:
+  100pfps:
+    image: docker.io/golang:alpine
+    container_name: 100pfps-dev
+    restart: unless-stopped
+    depends_on:
+      - db
+    volumes:
+      - ./:/app/
+      - imgs:/imgs/
+    environment:
+      - JWT_TOKEN=${JWT_TOKEN}
+      - DATABASE_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@100pfps-db-dev/${POSTGRES_DB}
+      - MODE=${MODE}
+    working_dir: /app/
+    entrypoint: sh /app/dev.sh
+
+  www:
+    image: docker.io/nginx:alpine
+    container_name: 100pfps-www-dev
+    volumes: 
+      - ./www/nginx.dev.conf:/etc/nginx/nginx.conf
+      - ./public/:/public/
+      - imgs:/imgs/
+    ports:
+      - 8080:80
+
+  db:
+    image: docker.io/postgres:alpine
+    container_name: 100pfps-db-dev
+    restart: unless-stopped
+    volumes: 
+      - db:/var/lib/postgresql/data:Z
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+
+volumes:
+  db:
+    driver: local
+  imgs:
+    driver: local
