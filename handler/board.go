@@ -1,9 +1,11 @@
 package handler
 
 import (
+	"net"
 	"net/http"
 
 	"github.com/go-playground/validator/v10"
+	"github.com/jackc/pgtype"
 	"github.com/labstack/echo/v4"
 	"github.com/nfnt/resize"
 	"github.com/oliamb/cutter"
@@ -22,8 +24,22 @@ func GetBoard(c echo.Context) (err error) {
 		return
 	}
 
+	tags, err := model.GetAvaliableTags()
+	if err != nil {
+		return err
+	}
+
 	if err = c.Validate(&filter); err != nil {
-		return
+		profiles, err2 := model.GetProfiles(nil)
+		if err2 != nil {
+			return err2
+		}
+
+		return c.Render(http.StatusBadRequest, "board.html", utils.M{
+			"profiles": profiles,
+			"tags":     tags,
+			"tag":      filter.Tag,
+		})
 	}
 
 	profiles, err := model.GetProfiles(filter.Tag)
@@ -31,7 +47,7 @@ func GetBoard(c echo.Context) (err error) {
 		return
 	}
 
-	tags, err := model.GetAvaliableTags()
+	tags, err = model.GetAvaliableTags()
 	if err != nil {
 		return
 	}
@@ -102,10 +118,14 @@ func PostProfile(c echo.Context) (err error) {
 
 	finalImg := resize.Resize(0, 100, croppedImg, resize.Lanczos3)
 
+	var ip pgtype.Inet
+	ip.Set(c.Get("ip").(net.IP))
+
 	profile := model.Profile{
 		Name:        form.Name,
 		Description: form.Description,
 		Tags:        model.StrToTags(form.Tags),
+		Ip:          ip,
 	}
 
 	model.InsertProfile(&profile)

@@ -6,5 +6,6 @@ func SetupMigrations() {
 	db.GetDB().AutoMigrate(
 		&Profile{},
 		&Tag{},
+		&Ban{},
 	)
 }

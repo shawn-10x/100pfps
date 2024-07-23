@@ -2,19 +2,19 @@ package model
 
 import (
 	"fmt"
-	"net"
 	"os"
 	"time"
 
+	"github.com/jackc/pgtype"
 	"github.com/shawn-10x/100pfps/db"
 )
 
 type Profile struct {
-	ID          uint
+	ID          uint   `gorm:"primaryKey"`
 	Name        string `gorm:"not null"`
 	Description string `gorm:"not null"`
 	Tags        []Tag
-	Ip          net.IP `gorm:"uniqueIndex"`
+	Ip          pgtype.Inet `gorm:"uniqueIndex;type:inet;not null"`
 	CreatedAt   time.Time
 }
 
@@ -25,7 +25,7 @@ func GetProfiles(tag *string) (profiles []Profile, err error) {
 	} else {
 		tx = tx.Joins("JOIN tags ON tags.profile_id = profiles.id AND tags.name = ?", *tag)
 	}
-	err = tx.Find(&profiles).Error
+	err = tx.Order("id DESC").Find(&profiles).Error
 	return
 }
 

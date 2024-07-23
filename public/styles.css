@@ -209,3 +209,6 @@ header {
 #form-profile__modal-toggle:checked~.modal__shadow {
     display: block;
 }
+#banned {
+    color: red;
+}
