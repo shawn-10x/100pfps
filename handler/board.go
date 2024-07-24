@@ -32,7 +32,7 @@ func GetBoard(c echo.Context) (err error) {
 		})
 	}
 
-	return c.Render(http.StatusBadRequest, "board.html", utils.M{
+	return c.Render(http.StatusOK, "board.html", utils.M{
 		"profiles": model.GetProfiles(filter.Tag),
 		"tags":     model.GetAvaliableTags(),
 		"tag":      filter.Tag,

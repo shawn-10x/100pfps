@@ -31,7 +31,7 @@ func GetProfiles(tag *string) (profiles []Profile) {
 }
 
 func GetProfileImg(profile *Profile) string {
-	return fmt.Sprintf("/imgs/%d.png", profile.ID)
+	return fmt.Sprintf("imgs/%d.png", profile.ID)
 }
 
 func DeleteProfile(profile *Profile) (err error) {
@@ -40,7 +40,7 @@ func DeleteProfile(profile *Profile) (err error) {
 		return
 	}
 	if err = os.Remove(GetProfileImg(profile)); err != nil {
-		return
+		return fmt.Errorf("Error deleting image")
 	}
 	return nil
 }

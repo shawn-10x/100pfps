@@ -2,14 +2,17 @@ services:
   100pfps:
     image: 100pfps-prod
     build: 
-      dockerfile: ./backend/Dockerfile
+      dockerfile: ./Dockerfile
       context: .
       args:
         UNAME: ${UNAME}
+    volumes:
+      - imgs:/app/imgs/
     container_name: 100pfps-prod
     restart: unless-stopped
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     environment:
       - MODE=Release
       - DATABASE_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@100pfps-db-prod/${POSTGRES_DB}
@@ -17,13 +20,14 @@ services:
   www:
     image: 100pfps-www-prod
     restart: unless-stopped
+    volumes:
+      - imgs:/imgs/
     build:
       dockerfile: ./www/Dockerfile
       context: .
     container_name: 100pfps-www-prod
     depends_on:
-      - frontend
-      - backend
+      - 100pfps
     ports:
       - 8080:80
       - 8443:443
@@ -38,7 +42,14 @@ services:
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_DB=${POSTGRES_DB}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U${POSTGRES_USER}"]
+      interval: 10m
+      start_period: 10s
+      start_interval: 3s
 
 volumes:
   db:
-    driver: local
+    name: 100pfps-db-prod
+  imgs:
+    name: 100pfps-imgs-prod

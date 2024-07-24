@@ -4,10 +4,11 @@ services:
     container_name: 100pfps-dev
     restart: unless-stopped
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     volumes:
       - ./:/app/
-      - imgs:/imgs/
+      - imgs:/app/imgs/
     environment:
       - JWT_TOKEN=${JWT_TOKEN}
       - DATABASE_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@100pfps-db-dev/${POSTGRES_DB}
@@ -35,9 +36,14 @@ services:
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_DB=${POSTGRES_DB}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U${POSTGRES_USER}"]
+      interval: 10m
+      start_period: 10s
+      start_interval: 3s
 
 volumes:
   db:
-    driver: local
+    name: 100pfps-db-prod
   imgs:
-    driver: local
+    name: 100pfps-imgs-prod
