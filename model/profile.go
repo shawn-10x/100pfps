@@ -2,6 +2,7 @@ package model
 
 import (
 	"fmt"
+	"net"
 	"os"
 	"time"
 
@@ -42,6 +43,12 @@ func DeleteProfile(profile *Profile) (err error) {
 		return
 	}
 	return nil
+}
+
+func ExistsProfileWithIP(ip net.IP) (exists bool, err error) {
+	var count int64
+	err = db.GetDB().Model(&Profile{}).Where("ip = ?", ip.String()).Count(&count).Error
+	return count > 0, err
 }
 
 func InsertProfile(profile *Profile) (err error) {

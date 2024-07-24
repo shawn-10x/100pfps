@@ -84,10 +84,10 @@ func PostProfile(c echo.Context) (err error) {
 
 	showErrors := func(errors utils.Ms) error {
 		return c.Render(http.StatusBadRequest, "board.html", utils.M{
-			"profiles": profiles,
-			"tags":     tags,
-			"form":     form,
-			"errors":   errors,
+			"profiles":            profiles,
+			"tags":                tags,
+			"form-profile-data":   form,
+			"form-profile-errors": errors,
 		})
 	}
 
@@ -96,10 +96,21 @@ func PostProfile(c echo.Context) (err error) {
 		return showErrors(errors)
 	}
 
+	exists, err := model.ExistsProfileWithIP(c.Get("ip").(net.IP))
+	if err != nil {
+		return
+	}
+
+	if exists {
+		return showErrors(utils.Ms{
+			"kind": "You already posted a profile with this IP",
+		})
+	}
+
 	image, err := utils.ReadImage(c, "img")
 	if err != nil {
 		return showErrors(utils.Ms{
-			"Image": "Insert an image",
+			"kind": "Insert an image",
 		})
 	}
 
@@ -112,7 +123,7 @@ func PostProfile(c echo.Context) (err error) {
 
 	if err != nil {
 		return showErrors(utils.Ms{
-			"Image": "Error processing image",
+			"kind": "Error processing image",
 		})
 	}
 

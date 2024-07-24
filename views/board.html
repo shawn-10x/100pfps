@@ -7,18 +7,14 @@
     <link rel="stylesheet" href="/public/styles.css">
 </head>
 <body>
-    {{ $errors := hasKey . "errors" | ternary (index . "errors") stringMap }}
-    {{ $hasErrors := gt (len $errors) 0 }}
-    {{ $form := index . "form" }}
-    {{ $selected_tag := index . "tag" }}
-    <input type="checkbox" name="form-profile__modal-toggle" id="form-profile__modal-toggle" {{ $hasErrors | ternary "checked" "" }}>
-    <div class="modal__shadow"></div>
     <header>
         <h1>100 PFPs</h1>
         Welcome to 100 PFPs, feel free to post your own profile here<br>
         take care before you post anything, your profile is public and it will not be removeable until the next round <a href="">see details</a>
     </header>
+
     <form class="filter">
+        {{ $selected_tag := index . "tag" }}
         <select name="tag">
             <option value="any">Any</option>
             {{ range $tag := index . "tags" }}
@@ -51,15 +47,19 @@
     </div>
 
     <form class="modal form-profile" method="POST" enctype="multipart/form-data">
+        {{ $form := index . "form-profile-data" }}
+        {{ $errors := index . "form-profile-errors" | valueOr stringMap }}
+        {{ $hasErrors := gt (len $errors) 0 }}
+        <input type="checkbox" name="form-profile__modal-toggle" id="form-profile__modal-toggle" {{ $hasErrors | ternary "checked" "" }}>
         <div class="form-profile__title">Submit your profile</div>
-        <!-- <div class="error-msg">{{ index $errors "kind" }}</div> -->
+        <div class="form-profile__error-kind error-msg">{{ index $errors "kind" | html }}</div>
         <!-- <input type="text" name="ID" placeholder="id"> -->
         <div class="form-profile__entry">
-            <input type="text" placeholder="Name" name="name" value="{{ $form.Name | valueOrEmpty | html }}">
+            <input type="text" placeholder="Name" name="name" value="{{ $form.Name | valueOrEmpty | html }}" required>
             <div class="error-msg">{{ index $errors "Name" | html }}</div>
         </div>
         <div class="form-profile__entry">
-            <textarea type="text" placeholder="Description" name="description">{{ $form.Description | valueOrEmpty | html }}</textarea>
+            <textarea type="text" placeholder="Description" name="description" required>{{ $form.Description | valueOrEmpty | html }}</textarea>
             <div class="error-msg">{{ index $errors "Description" | html }}</div>
         </div>
 
@@ -69,7 +69,7 @@
         </div>
         
         <div class="form-profile__entry">
-            <input type="file" id="form-profile__entry__img" name="img" accept="image/jpeg, image/png">
+            <input type="file" id="form-profile__entry__img" name="img" accept="image/jpeg, image/png" required>
             <div class="error-msg">{{ index $errors "Image" | html }}</div>
         </div>
 
@@ -79,6 +79,6 @@
         </div>
     </form>
     <!-- <button class="add-btn">+</button> -->
-
+    <div class="modal__shadow"></div>
 </body>
 </html>
