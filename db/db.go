@@ -15,15 +15,13 @@ func GetDB() *gorm.DB {
 }
 
 func Connect() {
-	dsn := os.Getenv("DATABASE_URL")
-	mode := os.Getenv("MODE")
 	var err error
 
 	logger_ := logger.Info
-	if mode == "Release" {
+	if os.Getenv("MODE") == "Release" {
 		logger_ = logger.Silent
 	}
-	db, err = gorm.Open(postgres.Open(dsn), &gorm.Config{
+	db, err = gorm.Open(postgres.Open(os.Getenv("DATABASE_URL")), &gorm.Config{
 		SkipDefaultTransaction: true,
 		PrepareStmt:            true,
 		Logger:                 logger.Default.LogMode(logger_),

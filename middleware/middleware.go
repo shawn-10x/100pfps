@@ -6,7 +6,7 @@ import (
 )
 
 func SetupMiddlewares(e *echo.Echo) {
-	e.Use(middleware.Logger())
+	//e.Use(middleware.Logger()) we have nginx!!!
 	e.Use(middleware.Recover())
 	e.Use(HandleError)
 	e.Use(GetIP)

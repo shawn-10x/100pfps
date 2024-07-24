@@ -25,6 +25,8 @@ services:
       - imgs:/imgs/
     ports:
       - 8080:80
+    depends_on:
+      - 100pfps
 
   db:
     image: docker.io/postgres:alpine
