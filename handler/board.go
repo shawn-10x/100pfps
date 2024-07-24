@@ -24,21 +24,17 @@ func GetBoard(c echo.Context) (err error) {
 		return
 	}
 
-	tags := model.GetAvaliableTags()
 	if err = c.Validate(&filter); err != nil {
-		profiles := model.GetProfiles(nil)
 		return c.Render(http.StatusBadRequest, "board.html", utils.M{
-			"profiles": profiles,
-			"tags":     tags,
+			"profiles": model.GetAvaliableTags(),
+			"tags":     model.GetProfiles(nil),
 			"tag":      filter.Tag,
 		})
 	}
 
-	profiles := model.GetProfiles(filter.Tag)
-
 	return c.Render(http.StatusBadRequest, "board.html", utils.M{
-		"profiles": profiles,
-		"tags":     tags,
+		"profiles": model.GetAvaliableTags(),
+		"tags":     model.GetProfiles(filter.Tag),
 		"tag":      filter.Tag,
 	})
 }
@@ -56,13 +52,10 @@ func PostProfile(c echo.Context) (err error) {
 		return
 	}
 
-	profiles := model.GetProfiles(nil)
-	tags := model.GetAvaliableTags()
-
 	showErrors := func(errors utils.Ms) error {
 		return c.Render(http.StatusBadRequest, "board.html", utils.M{
-			"profiles":            profiles,
-			"tags":                tags,
+			"profiles":            model.GetProfiles(nil),
+			"tags":                model.GetAvaliableTags(),
 			"form-profile-data":   form,
 			"form-profile-errors": errors,
 		})
