@@ -5,12 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>100 PFPs</title>
     <link rel="stylesheet" href="/public/styles.css">
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            align-items: center;
+        }
+    </style>
 </head>
 <body>
     <header>
         <h1>100 PFPs</h1>
+        {{ template "navbar.html" . }}
         Welcome to 100 PFPs, feel free to post your own profile here<br>
-        take care before you post anything, your profile is public and it will not be removeable until the next round <a href="">see details</a>
+        take care before you post anything, your profile is public and it will not be removeable until the next round <a href="/details/">see details</a>
     </header>
 
     <form class="filter">
@@ -48,7 +57,7 @@
 
     <form class="modal form-profile" method="POST" enctype="multipart/form-data">
         {{ $form := index . "form-profile-data" }}
-        {{ $errors := index . "form-profile-errors" | valueOr stringMap }}
+        {{ $errors := index . "form-profile-errors" | valueOr strMap }}
         {{ $hasErrors := gt (len $errors) 0 }}
         <input type="checkbox" name="form-profile__modal-toggle" id="form-profile__modal-toggle" {{ $hasErrors | ternary "checked" "" }}>
         <div class="form-profile__title">Submit your profile</div>
@@ -68,9 +77,13 @@
             <div class="error-msg">{{ index $errors "Tags" | html }}</div>
         </div>
         
-        <div class="form-profile__entry">
-            <input type="file" id="form-profile__entry__img" name="img" accept="image/jpeg, image/png" required>
+        <div class="form-profile__entry form-profile__img">
+            <input type="file" name="img" accept="image/jpeg, image/png" required>
             <div class="error-msg">{{ index $errors "Image" | html }}</div>
+        </div>
+
+        <div class="form-profile__entry form-profile__terms">
+            <input type="checkbox" name="rulesandprivacyaccepted" required> I accept <a href="/rules/">Rules</a> and <a href="/privacy/">Privacy Policy</a>
         </div>
 
         <div class="form-profile__entry buttons">

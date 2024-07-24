@@ -26,24 +26,25 @@ func GetBoard(c echo.Context) (err error) {
 
 	if err = c.Validate(&filter); err != nil {
 		return c.Render(http.StatusBadRequest, "board.html", utils.M{
-			"profiles": model.GetAvaliableTags(),
-			"tags":     model.GetProfiles(nil),
+			"profiles": model.GetProfiles(nil),
+			"tags":     model.GetAvaliableTags(),
 			"tag":      filter.Tag,
 		})
 	}
 
 	return c.Render(http.StatusBadRequest, "board.html", utils.M{
-		"profiles": model.GetAvaliableTags(),
-		"tags":     model.GetProfiles(filter.Tag),
+		"profiles": model.GetProfiles(filter.Tag),
+		"tags":     model.GetAvaliableTags(),
 		"tag":      filter.Tag,
 	})
 }
 
 func PostProfile(c echo.Context) (err error) {
 	type Form struct {
-		Name        string `form:"name" validate:"required,max=20"`
-		Description string `form:"description" validate:"required,max=100"`
-		Tags        string `form:"tags" validate:"required,max=75,tags,tags_max_count=5,tag_length=15"`
+		Name                    string `form:"name" validate:"required,max=20"`
+		Description             string `form:"description" validate:"required,max=100"`
+		Tags                    string `form:"tags" validate:"required,max=75,tags,tags_max_count=5,tag_length=15"`
+		RulesAndPrivacyAccepted bool   `form:"rulesandprivacyaccepted" validate:"required"`
 	}
 
 	form := Form{}
@@ -64,6 +65,12 @@ func PostProfile(c echo.Context) (err error) {
 	if err := c.Validate(&form); err != nil {
 		errors := validators.ValidationErrors(err.(validator.ValidationErrors))
 		return showErrors(errors)
+	}
+
+	if !form.RulesAndPrivacyAccepted {
+		return showErrors(utils.Ms{
+			"kind": "You need to accept Rules and Privacy Policy to proceed",
+		})
 	}
 
 	if model.ExistsProfileWithIP(c.Get("ip").(net.IP)) {

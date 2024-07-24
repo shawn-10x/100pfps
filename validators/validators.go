@@ -26,7 +26,7 @@ func SetupValidators(e *echo.Echo) {
 
 func ValidationErrors(v_errors validator.ValidationErrors) utils.Ms {
 	errors := map[string]string{}
-	errors["kind"] = "Error validating"
+	errors["kind"] = "Error validating fields"
 	for _, err := range v_errors {
 		var msg string
 		switch err.Tag() {

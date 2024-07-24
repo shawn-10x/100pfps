@@ -3,6 +3,9 @@
     --block-color: #1d181d;
     --input-color: #3a3535;
     --text-color: #ffe4d5;
+    --green-color: #2dcc75;
+    --error-color: #ff4848;
+    --link-color: #ef7db1;
     --profile-size: 50px;
     --font-size: 12pt;
     --board-size: calc(var(--profile-size) * sqrt(100));
@@ -18,12 +21,7 @@ body {
     color: var(--text-color);
     font-family: monospace;
     font-size: var(--font-size);
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
     margin: 0;
-    height: 100vh;
-    align-items: center;
 }
 * {
     box-sizing: border-box;
@@ -71,9 +69,29 @@ h1 {
 }
 header {
     text-align: center;
-    margin: 20px;
+    margin-bottom: 20px;
+}
+article {
+    margin-left: auto;    
+    margin-right: auto;
+    width: 700px;
+    text-align: justify;
+    text-wrap: wrap;
+}
+nav {
+    text-align: center;
+    margin-bottom: 20px;
+}
+a {
+    color: var(--link-color);
 }
 
+.navbar span::after {
+    content: " | ";
+}
+.navbar span:last-child::after {
+    content: "";
+}
 .board {
     --padding: 20px;
     display: flex;
@@ -130,7 +148,7 @@ header {
     display: flex;
     flex-direction: column;
     margin: auto;
-    width: 300px;
+    width: 330px;
     align-items: stretch;
     padding: 20px;
     border-radius: 5px;
@@ -139,6 +157,8 @@ header {
     left: 50%;
     transform: translate(-50%, -50%);
     z-index: 10;
+    font-size: 9pt;
+    overflow: hidden;
 }
 .modal__shadow {
     position: absolute;
@@ -167,16 +187,22 @@ header {
 .form-profile__entry .error-msg {
     margin-left: 10px;
 }
-.form-profile__entry > input, .form-profile__entry > textarea {
+.form-profile__entry > input[type="text"], .form-profile__entry > textarea {
     width: 100%;
 }
+.form-profile__img {
+    overflow: hidden;
+}
+.form-profile__terms {
+    text-align: center;
+}
 .form-profile__submit-btn {
-    background-color: #2dcc75;
+    background-color: var(--green-color);
     font-weight: bold;
     align-self: center;
 }
 .error-msg {
-    color: #ff4848;
+    color: var(--error-color);
     font-size: 10pt;
     align-self: flex-start;
 }
@@ -215,5 +241,6 @@ header {
     display: block;
 }
 #banned {
-    color: red;
+    color: var(--error-color);
 }
+

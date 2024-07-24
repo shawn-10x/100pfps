@@ -31,6 +31,15 @@ func derefStr(str *string) string {
 	return *str
 }
 
-func stringMap() (s map[string]string) {
-	return
+func strMap() map[string]string {
+	return map[string]string{}
+}
+
+func strMapSet(k string, v string, m map[string]string) string {
+	m[k] = v
+	return ""
+}
+
+func add(v1 int, v2 int) int {
+	return v1 + v2
 }

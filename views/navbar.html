@@ -1,0 +1,19 @@
+{{ $entries := strMap }}
+
+{{ $entries | strMapSet "/" "Profiles" }}
+{{ $entries | strMapSet "/rules/" "Rules" }}
+{{ $entries | strMapSet "/privacy/" "Privacy" }}
+{{ $entries | strMapSet "/details/" "Details" }}
+
+<nav class="navbar">
+    {{ $url := index . "url" }}
+    {{ range $key, $value := $entries }}
+        <span>
+            {{ if eq $url $key }}
+                <b>{{ $value }}</b>
+            {{ else }}
+                <a href="{{ $key }}">{{ $value }}</a>
+            {{ end }}
+        </span>
+    {{ end }}
+</nav>

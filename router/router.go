@@ -10,6 +10,10 @@ func New() *echo.Echo {
 	middleware.SetupMiddlewares(e)
 
 	g := e.Group("")
-	BoardSetup(g)
+	SetupBoard(g)
+	SetupPrivacy(g)
+	SetupRules(g)
+	SetupDetails(g)
+	SetupNotFound()
 	return e
 }

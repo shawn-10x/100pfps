@@ -7,6 +7,7 @@ import (
 	"text/template"
 
 	"github.com/labstack/echo/v4"
+	"github.com/shawn-10x/100pfps/utils"
 )
 
 type Template struct {
@@ -31,6 +32,11 @@ func getTempFilesFromFolders(folders ...string) []string {
 }
 
 func (t *Template) Render(w io.Writer, name string, data interface{}, c echo.Context) error {
+	if data == nil {
+		data = utils.M{}
+	}
+	data.(utils.M)["view"] = name
+	data.(utils.M)["url"] = c.Request().URL.String()
 	return t.templates.ExecuteTemplate(w, name, data)
 }
 
@@ -41,7 +47,9 @@ func SetupViews(e *echo.Echo) {
 		"valueOr":      valueOr,
 		"valueOrEmpty": valueOrEmpty,
 		"derefStr":     derefStr,
-		"stringMap":    stringMap,
+		"strMap":       strMap,
+		"strMapSet":    strMapSet,
+		"add":          add,
 	}
 	t := &Template{
 		templates: template.Must(template.New("base").Funcs(funcMap).ParseFiles(getTempFilesFromFolders("views/")...)),
