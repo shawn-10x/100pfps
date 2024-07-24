@@ -63,7 +63,7 @@ func PostProfile(c echo.Context) (err error) {
 	type Form struct {
 		Name        string `form:"name" validate:"required,max=20"`
 		Description string `form:"description" validate:"required,max=100"`
-		Tags        string `form:"tags" validate:"max=75,tags,tags_max_count=5,tag_length=15"`
+		Tags        string `form:"tags" validate:"required,max=75,tags,tags_max_count=5,tag_length=15"`
 	}
 
 	form := Form{}

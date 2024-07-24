@@ -10,10 +10,6 @@ import (
 func ValidateTags(fl validator.FieldLevel) bool {
 	v := fl.Field().String()
 
-	if len(v) == 0 {
-		return true
-	}
-
 	tags := strings.Split(v, " ")
 
 	for _, tag := range tags {

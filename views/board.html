@@ -64,7 +64,7 @@
         </div>
 
         <div class="form-profile__entry">
-            <input placeholder="#tag1 #tag2 #tag3..." type="text" name="tags" value="{{ $form.Tags | valueOrEmpty | html }}">
+            <input placeholder="#tag1 #tag2 #tag3..." type="text" name="tags" value="{{ $form.Tags | valueOrEmpty | html }}" required>
             <div class="error-msg">{{ index $errors "Tags" | html }}</div>
         </div>
         
