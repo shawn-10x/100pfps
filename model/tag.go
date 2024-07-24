@@ -16,8 +16,8 @@ type TagsAvaliable []struct {
 	Count int
 }
 
-func GetAvaliableTags() (tags_avaliable TagsAvaliable, err error) {
-	err = db.GetDB().Model(&Tag{}).Select("name, count(profile_id)").Group("name").Scan(&tags_avaliable).Error
+func GetAvaliableTags() (tags_avaliable TagsAvaliable) {
+	db.GetDB().Model(&Tag{}).Select("name, count(profile_id)").Group("name").Scan(&tags_avaliable)
 	return
 }
 

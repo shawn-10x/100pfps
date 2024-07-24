@@ -19,14 +19,14 @@ type Profile struct {
 	CreatedAt   time.Time
 }
 
-func GetProfiles(tag *string) (profiles []Profile, err error) {
+func GetProfiles(tag *string) (profiles []Profile) {
 	tx := db.GetDB()
 	if tag == nil || *tag == "any" {
 		tx = tx.Preload("Tags").Find(&profiles)
 	} else {
 		tx = tx.Joins("JOIN tags ON tags.profile_id = profiles.id AND tags.name = ?", *tag)
 	}
-	err = tx.Order("id DESC").Find(&profiles).Error
+	tx.Order("id DESC").Find(&profiles)
 	return
 }
 
@@ -45,10 +45,10 @@ func DeleteProfile(profile *Profile) (err error) {
 	return nil
 }
 
-func ExistsProfileWithIP(ip net.IP) (exists bool, err error) {
+func ExistsProfileWithIP(ip net.IP) (exists bool) {
 	var count int64
-	err = db.GetDB().Model(&Profile{}).Where("ip = ?", ip.String()).Count(&count).Error
-	return count > 0, err
+	db.GetDB().Model(&Profile{}).Where("ip = ?", ip.String()).Count(&count)
+	return count > 0
 }
 
 func InsertProfile(profile *Profile) (err error) {
@@ -58,9 +58,7 @@ func InsertProfile(profile *Profile) (err error) {
 	db.Model(&Profile{}).Count(&count)
 	if count >= 99 {
 		var profile Profile
-		if err = db.Order("id ASC").First(&profile).Error; err != nil {
-			return
-		}
+		db.Order("id ASC").First(&profile)
 		if err = DeleteProfile(&profile); err != nil {
 			return
 		}

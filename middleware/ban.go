@@ -11,11 +11,7 @@ import (
 
 func CheckBan(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		isBanned, err := model.IsBanned(c.Get("ip").(net.IP))
-		if err != nil {
-			return err
-		}
-		if isBanned {
+		if model.IsBanned(c.Get("ip").(net.IP)) {
 			return c.Render(http.StatusUnauthorized, "ban.html", utils.M{})
 		}
 		return next(c)

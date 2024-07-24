@@ -24,17 +24,9 @@ func GetBoard(c echo.Context) (err error) {
 		return
 	}
 
-	tags, err := model.GetAvaliableTags()
-	if err != nil {
-		return err
-	}
-
+	tags := model.GetAvaliableTags()
 	if err = c.Validate(&filter); err != nil {
-		profiles, err2 := model.GetProfiles(nil)
-		if err2 != nil {
-			return err2
-		}
-
+		profiles := model.GetProfiles(nil)
 		return c.Render(http.StatusBadRequest, "board.html", utils.M{
 			"profiles": profiles,
 			"tags":     tags,
@@ -42,15 +34,7 @@ func GetBoard(c echo.Context) (err error) {
 		})
 	}
 
-	profiles, err := model.GetProfiles(filter.Tag)
-	if err != nil {
-		return
-	}
-
-	tags, err = model.GetAvaliableTags()
-	if err != nil {
-		return
-	}
+	profiles := model.GetProfiles(filter.Tag)
 
 	return c.Render(http.StatusBadRequest, "board.html", utils.M{
 		"profiles": profiles,
@@ -72,15 +56,8 @@ func PostProfile(c echo.Context) (err error) {
 		return
 	}
 
-	profiles, err := model.GetProfiles(nil)
-	if err != nil {
-		return
-	}
-
-	tags, err := model.GetAvaliableTags()
-	if err != nil {
-		return
-	}
+	profiles := model.GetProfiles(nil)
+	tags := model.GetAvaliableTags()
 
 	showErrors := func(errors utils.Ms) error {
 		return c.Render(http.StatusBadRequest, "board.html", utils.M{
@@ -96,12 +73,7 @@ func PostProfile(c echo.Context) (err error) {
 		return showErrors(errors)
 	}
 
-	exists, err := model.ExistsProfileWithIP(c.Get("ip").(net.IP))
-	if err != nil {
-		return
-	}
-
-	if exists {
+	if model.ExistsProfileWithIP(c.Get("ip").(net.IP)) {
 		return showErrors(utils.Ms{
 			"kind": "You already posted a profile with this IP",
 		})

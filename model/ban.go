@@ -23,20 +23,20 @@ func RemoveBan(ip net.IP) (err error) {
 	return db.GetDB().Delete(&ban).Error
 }
 
-func IsBanned(ip net.IP) (banned bool, err error) {
+func IsBanned(ip net.IP) (banned bool) {
 	var netip net.IPNet
 	netip.IP = ip
 	if ip.To4() != nil {
-		netip.Mask = getMask(32)
+		netip.Mask = createMask(32)
 	} else {
-		netip.Mask = getMask(70)
+		netip.Mask = createMask(70)
 	}
 	var count int64
-	q := db.GetDB().Model(&Ban{}).Where("ip <<= ?", netip.String()).Limit(1).Count(&count)
-	return count > 0, q.Error
+	db.GetDB().Model(&Ban{}).Where("ip <<= ?", netip.String()).Limit(1).Count(&count)
+	return count > 0
 }
 
-func getMask(bits uint8) (mask net.IPMask) {
+func createMask(bits uint8) (mask net.IPMask) {
 	var size int
 	if bits <= 32 {
 		size = 4
