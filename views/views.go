@@ -49,7 +49,6 @@ func SetupViews(e *echo.Echo) {
 		"derefStr":     derefStr,
 		"strMap":       strMap,
 		"strMapSet":    strMapSet,
-		"add":          add,
 	}
 	t := &Template{
 		templates: template.Must(template.New("base").Funcs(funcMap).ParseFiles(getTempFilesFromFolders("views/")...)),

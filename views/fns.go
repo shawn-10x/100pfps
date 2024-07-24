@@ -39,7 +39,3 @@ func strMapSet(k string, v string, m map[string]string) string {
 	m[k] = v
 	return ""
 }
-
-func add(v1 int, v2 int) int {
-	return v1 + v2
-}
