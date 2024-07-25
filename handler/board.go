@@ -111,8 +111,8 @@ func PostProfile(c echo.Context) (err error) {
 		Ip:          ip,
 	}
 
-	model.InsertProfile(&profile)
-	utils.WriteImage(finalImg, model.GetProfileImg(&profile))
+	profile.Insert()
+	utils.WriteImage(finalImg, profile.GetProfileImg())
 
 	return c.Redirect(http.StatusSeeOther, "/")
 }

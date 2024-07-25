@@ -8,13 +8,14 @@ import (
 
 	"github.com/jackc/pgtype"
 	"github.com/shawn-10x/100pfps/db"
+	"gorm.io/gorm"
 )
 
 type Profile struct {
-	ID          uint   `gorm:"primaryKey"`
-	Name        string `gorm:"not null"`
-	Description string `gorm:"not null"`
-	Tags        []Tag
+	ID          uint        `gorm:"primaryKey"`
+	Name        string      `gorm:"not null"`
+	Description string      `gorm:"not null"`
+	Tags        []Tag       `gorm:"constraint:OnDelete:CASCADE"`
 	Ip          pgtype.Inet `gorm:"uniqueIndex;type:inet;not null"`
 	CreatedAt   time.Time
 }
@@ -30,16 +31,16 @@ func GetProfiles(tag *string) (profiles []Profile) {
 	return
 }
 
-func GetProfileImg(profile *Profile) string {
+func (profile *Profile) GetProfileImg() string {
 	return fmt.Sprintf("imgs/%d.png", profile.ID)
 }
 
-func DeleteProfile(profile *Profile) (err error) {
+func (profile *Profile) Delete() (err error) {
 	db := db.GetDB()
 	if err = db.Delete(profile).Error; err != nil {
 		return
 	}
-	if err = os.Remove(GetProfileImg(profile)); err != nil {
+	if err = os.Remove(profile.GetProfileImg()); err != nil {
 		return fmt.Errorf("Error deleting image")
 	}
 	return nil
@@ -51,7 +52,12 @@ func ExistsProfileWithIP(ip net.IP) (exists bool) {
 	return count > 0
 }
 
-func InsertProfile(profile *Profile) (err error) {
+func (profile *Profile) Insert() (err error) {
+	db := db.GetDB()
+	return db.Preload("Tags").Create(profile).Error
+}
+
+func (u *Profile) BeforeCreate(tx *gorm.DB) (err error) {
 	db := db.GetDB()
 
 	var count int64
@@ -59,9 +65,9 @@ func InsertProfile(profile *Profile) (err error) {
 	if count >= 99 {
 		var profile Profile
 		db.Order("id ASC").First(&profile)
-		if err = DeleteProfile(&profile); err != nil {
+		if err = profile.Delete(); err != nil {
 			return
 		}
 	}
-	return db.Preload("Tags").Create(profile).Error
+	return
 }
