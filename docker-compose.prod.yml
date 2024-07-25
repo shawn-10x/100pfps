@@ -14,19 +14,8 @@ services:
     environment:
       - MODE=Release
       - DATABASE_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@100pfps-db-prod/${POSTGRES_DB}
-
-  www:
-    image: 100pfps-www-prod
-    restart: unless-stopped
-    build:
-      dockerfile: ./www/Dockerfile
-      context: .
-    container_name: 100pfps-www-prod
-    depends_on:
-      - 100pfps
     ports:
-      - 8080:80
-      - 8443:443
+      - 8080:8080
 
   db:
     image: docker.io/postgres:alpine

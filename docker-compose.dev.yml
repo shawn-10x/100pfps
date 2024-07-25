@@ -18,17 +18,8 @@ services:
       - MODE=${MODE}
     working_dir: /app/
     entrypoint: sh /app/dev.sh
-
-  www:
-    image: docker.io/nginx:alpine
-    container_name: 100pfps-www-dev
-    volumes: 
-      - ./www/nginx.dev.conf:/etc/nginx/nginx.conf
-      - ./public/:/public/
     ports:
-      - 8080:80
-    depends_on:
-      - 100pfps
+      - 8080:8080
 
   db:
     image: docker.io/postgres:alpine
