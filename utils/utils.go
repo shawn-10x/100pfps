@@ -4,8 +4,10 @@ import (
 	"image"
 	_ "image/jpeg"
 	png "image/png"
+	"io"
 	"os"
 
+	"github.com/h2non/bimg"
 	"github.com/labstack/echo/v4"
 )
 
@@ -29,7 +31,7 @@ type Ms map[string]string
 // 	return nil
 // }
 
-func ReadImage(c echo.Context, name string) (img image.Image, err error) {
+func ReadImage(c echo.Context, name string) (img *bimg.Image, err error) {
 	file, err := c.FormFile(name)
 	if err != nil {
 		return nil, err
@@ -40,11 +42,11 @@ func ReadImage(c echo.Context, name string) (img image.Image, err error) {
 	}
 	defer fd.Close()
 
-	img, _, err = image.Decode(fd)
-
+	data, err := io.ReadAll(fd)
 	if err != nil {
 		return
 	}
+	img = bimg.NewImage(data)
 
 	return img, nil
 }

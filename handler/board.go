@@ -5,10 +5,9 @@ import (
 	"net/http"
 
 	"github.com/go-playground/validator/v10"
+	"github.com/h2non/bimg"
 	"github.com/jackc/pgtype"
 	"github.com/labstack/echo/v4"
-	"github.com/nfnt/resize"
-	"github.com/oliamb/cutter"
 	"github.com/shawn-10x/100pfps/model"
 	"github.com/shawn-10x/100pfps/utils"
 	"github.com/shawn-10x/100pfps/validators"
@@ -79,27 +78,32 @@ func PostProfile(c echo.Context) (err error) {
 		})
 	}
 
-	image, err := utils.ReadImage(c, "img")
+	bimage, err := utils.ReadImage(c, "img")
 	if err != nil {
 		return showErrors(utils.Ms{
 			"kind": "Insert an image",
 		})
 	}
 
-	croppedImg, err := cutter.Crop(image, cutter.Config{
-		Width:   1,
-		Height:  1,
-		Mode:    cutter.Centered,
-		Options: cutter.Ratio,
+	finalImage, err_image := bimage.Process(bimg.Options{
+		Width:   100,
+		Height:  100,
+		Crop:    true,
+		Quality: 95,
+		Type:    bimg.WEBP,
 	})
-
-	if err != nil {
+	thumbnail, err_thumbnail := bimage.Process(bimg.Options{
+		Width:   50,
+		Height:  50,
+		Crop:    true,
+		Quality: 100,
+		Type:    bimg.WEBP,
+	})
+	if err_image != nil || err_thumbnail != nil {
 		return showErrors(utils.Ms{
 			"kind": "Error processing image",
 		})
 	}
-
-	finalImg := resize.Resize(0, 100, croppedImg, resize.Lanczos3)
 
 	var ip pgtype.Inet
 	ip.Set(c.Get("ip").(net.IP))
@@ -109,10 +113,11 @@ func PostProfile(c echo.Context) (err error) {
 		Description: form.Description,
 		Tags:        model.StrToTags(form.Tags),
 		Ip:          ip,
+		Image:       finalImage,
+		Thumbnail:   thumbnail,
 	}
 
 	profile.Insert()
-	utils.WriteImage(finalImg, profile.GetProfileImg())
 
 	return c.Redirect(http.StatusSeeOther, "/")
 }

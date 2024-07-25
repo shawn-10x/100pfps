@@ -17,6 +17,8 @@ type Profile struct {
 	Description string      `gorm:"not null"`
 	Tags        []Tag       `gorm:"constraint:OnDelete:CASCADE"`
 	Ip          pgtype.Inet `gorm:"uniqueIndex;type:inet;not null"`
+	Thumbnail   []byte      `gorm:"not null"`
+	Image       []byte      `gorm:"not null"`
 	CreatedAt   time.Time
 }
 

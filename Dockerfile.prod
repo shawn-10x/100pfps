@@ -2,6 +2,7 @@ FROM docker.io/golang:alpine AS b_100pfps-builder
 WORKDIR /app/
 ENV MODE=Release
 COPY . .
+RUN apk update && apk add vips-dev
 RUN go build -o 100pfps main.go
 
 FROM docker.io/alpine:latest

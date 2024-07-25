@@ -40,9 +40,9 @@
         <label class="add-btn" for="form-profile__modal-toggle">+</label>
         {{ range $profile := index . "profiles" }}
         <div class="profile">
-            <img class="profile__img" src="/imgs/{{ $profile.ID }}.png" alt="">
+            <img class="profile__img" src="data:image/webp;base64,{{ .Thumbnail | base64 }}" alt="">
             <div class="profile__info">
-                <img class="profile__info__img" src="/imgs/{{ .ID }}.png" alt="">
+                <img class="profile__info__img" src="data:image/webp;base64,{{ .Image | base64 }}" alt="">
                 <div class="profile__info__title">{{ $profile.Name | html }}</div>
                 <div class="profile__info__description">{{ $profile.Description | html }}</div>
                 <div class="profile__info__tags">
@@ -78,7 +78,7 @@
         </div>
         
         <div class="form-profile__entry form-profile__img">
-            <input type="file" name="img" accept="image/jpeg, image/png" required>
+            <input type="file" name="img" accept="image/jpeg, image/png, image/webp" required>
             <div class="error-msg">{{ index $errors "Image" | html }}</div>
         </div>
 

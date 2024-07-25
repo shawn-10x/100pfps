@@ -1,6 +1,7 @@
 package views
 
 import (
+	"encoding/base64"
 	"io"
 	"os"
 	"strings"
@@ -49,6 +50,7 @@ func SetupViews(e *echo.Echo) {
 		"derefStr":     derefStr,
 		"strMap":       strMap,
 		"strMapSet":    strMapSet,
+		"base64":       base64.StdEncoding.EncodeToString,
 	}
 	t := &Template{
 		templates: template.Must(template.New("base").Funcs(funcMap).ParseFiles(getTempFilesFromFolders("views/")...)),
