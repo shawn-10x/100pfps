@@ -46,6 +46,6 @@ services:
 
 volumes:
   db:
-    name: 100pfps-db-prod
+    name: 100pfps-db-dev
   imgs:
-    name: 100pfps-imgs-prod
+    name: 100pfps-imgs-dev
