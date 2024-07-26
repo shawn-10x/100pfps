@@ -1,10 +1,12 @@
 package utils
 
 import (
+	"crypto/rand"
 	"image"
 	_ "image/jpeg"
 	png "image/png"
 	"io"
+	"math/big"
 	"os"
 
 	"github.com/h2non/bimg"
@@ -59,4 +61,14 @@ func WriteImage(img image.Image, name string) error {
 	defer fd.Close()
 
 	return png.Encode(fd, img)
+}
+
+func GenerateRandomString(length int) string {
+	const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+	result := make([]byte, length)
+	for i := range result {
+		randomIndex, _ := rand.Int(rand.Reader, big.NewInt(int64(len(charset))))
+		result[i] = charset[randomIndex.Int64()]
+	}
+	return string(result)
 }

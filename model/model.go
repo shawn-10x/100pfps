@@ -7,5 +7,6 @@ func SetupMigrations() {
 		&Profile{},
 		&Tag{},
 		&Ban{},
+		&Admin{},
 	)
 }

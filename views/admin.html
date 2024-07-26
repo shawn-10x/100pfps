@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <style>
+        body {
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            display: flex;
+        }
+    </style>
+</head>
+<body>
+    <form id="form-admin" action="/admin/signin/" method="post">
+        {{ $errors := index . "form-admin-errors" | valueOr strMap }}
+        {{ $form := index . "form-admin-data" | valueOr strMap }}
+        <div class="form__error-kind error-msg">{{ index $errors "kind" | html }}</div>
+        <div class="form__entry">
+            <input type="text" name="user" placeholder="Username" value="{{ $form.User | valueOrEmpty | html }}">
+            <div class="error-msg">{{ index $errors "User" | html }}</div>
+        </div>
+        <div class="form__entry">
+            <input type="password" name="password" placeholder="Password" value="{{ $form.Password | valueOrEmpty | html }}">
+            <div class="error-msg">{{ index $errors "Password" | html }}</div>
+        </div>
+        <button id="form-admin__signin" type="submit">Sign In</button>
+    </form>
+</body>
+</html>

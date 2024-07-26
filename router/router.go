@@ -8,10 +8,13 @@ func New() *echo.Echo {
 	e := echo.New()
 
 	g := e.Group("")
-	SetupBoard(g)
+	SetupProfile(g)
 	SetupPrivacy(g)
 	SetupRules(g)
 	SetupDetails(g)
+	SetupAdmin(g)
+	SetupPublic(g)
 	SetupNotFound()
+
 	return e
 }

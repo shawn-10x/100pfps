@@ -46,6 +46,7 @@ button, input[type=file]::file-selector-button, .btn {
     text-align: center;
     font-weight: bold;
     font-size: 10pt;
+    font-family: monospace;
 }
 select {
     background-color: var(--input-color);
@@ -134,25 +135,20 @@ a {
     padding: 20px;
 
 }
-.profile__info__title {
-    font-weight: bold;
-    font-size: 20pt;
-}
 .profile__info__img {
     width: 100px;
     height: 100px;
     border-radius: var(--border-radius);
 }
-.form-profile {
+.modal {
     background-color: var(--block-color);
-    display: flex;
+    display: none;
     flex-direction: column;
     margin: auto;
-    width: 330px;
     align-items: stretch;
     padding: 20px;
     border-radius: 5px;
-    position: absolute;
+    position: fixed;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
@@ -160,43 +156,61 @@ a {
     font-size: 9pt;
     overflow: hidden;
 }
+.modal h2 {
+    margin: 0;
+    text-align: center;
+}
 .modal__shadow {
-    position: absolute;
+    position: fixed;
     top: 0;
     bottom: 0;
     left: 0;
     right: 0;
     background-color: #000000af;
     content: "";
-    z-index: 1;
+    z-index: 2;
     display: none;
 }
-.form-profile__title {
+.modal-toggle {
+    display: none;
+}
+.modal:has(.modal-toggle:checked) {
+    display: flex;
+}
+.modal:has(.modal-toggle:checked)~.modal__shadow {
+    display: block;
+}
+#form-profile {
+    width: 330px;
+}
+#form-profile__title {
     font-size: 15pt;
     font-weight: bold;
     align-self: center;
     margin-bottom: 10px;
     text-align: center;
 }
-.form-profile__error-kind {
+.form__error-kind {
     text-align: center;
 }
-.form-profile__entry {
+.form__entry {
+    width: 100%;
     padding: 10px;
 }
-.form-profile__entry .error-msg {
+.form__entry .error-msg {
     margin-left: 10px;
 }
-.form-profile__entry > input[type="text"], .form-profile__entry > textarea {
+.form__entry > input[type="text"], .form__entry > input[type="password"], .form__entry > textarea, .form__entry > select, .form__entry > button, .form__entry > .btn {
     width: 100%;
+    display: block;
 }
-.form-profile__img {
+#form-profile__img {
     overflow: hidden;
 }
-.form-profile__terms {
+#form-profile__terms {
     text-align: center;
 }
-.form-profile__submit-btn {
+#form-profile__submit-btn {
     background-color: var(--green-color);
     font-weight: bold;
     align-self: center;
@@ -228,19 +242,27 @@ a {
     margin-right: 5px;
     width: 80px;
 }
-#form-profile__modal-toggle {
-    display: none;
-}
-.form-profile:has(#form-profile__modal-toggle:checked) {
-    display: block;
-}
-.modal {
-    display: none;
-}
-.form-profile:has(#form-profile__modal-toggle:checked)~.modal__shadow {
-    display: block;
-}
 #banned {
     color: var(--error-color);
 }
+#admin-mark {
+    position: absolute;
+    top: 0;
+    left: 0;
+    font-weight: bold;
+}
+.form-profile__admin-actions__modal-label {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1;
+    cursor: pointer;
+}
 
+
+#form-admin__signin {
+    display: block;
+    margin: auto;
+}

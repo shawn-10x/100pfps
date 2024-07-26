@@ -3,7 +3,6 @@ package model
 import (
 	"fmt"
 	"net"
-	"os"
 	"time"
 
 	"github.com/jackc/pgtype"
@@ -33,6 +32,15 @@ func GetProfiles(tag *string) (profiles []Profile) {
 	return
 }
 
+func GetProfile(id uint) (profile *Profile) {
+	profile = new(Profile)
+	err := db.GetDB().Preload("Tags").Where("id = ?", id).Take(profile).Error
+	if err != nil {
+		profile = nil
+	}
+	return
+}
+
 func (profile *Profile) GetProfileImg() string {
 	return fmt.Sprintf("imgs/%d.png", profile.ID)
 }
@@ -41,9 +49,6 @@ func (profile *Profile) Delete() (err error) {
 	db := db.GetDB()
 	if err = db.Delete(profile).Error; err != nil {
 		return
-	}
-	if err = os.Remove(profile.GetProfileImg()); err != nil {
-		return fmt.Errorf("Error deleting image")
 	}
 	return nil
 }
@@ -55,13 +60,21 @@ func ExistsProfileWithIP(ip net.IP) (exists bool) {
 }
 
 func (profile *Profile) Insert() (err error) {
-	db := db.GetDB()
-	return db.Preload("Tags").Create(profile).Error
+	return db.GetDB().Preload("Tags").Create(profile).Error
 }
 
-func (u *Profile) BeforeCreate(tx *gorm.DB) (err error) {
-	db := db.GetDB()
+func (profile *Profile) GetIPNet() net.IPNet {
+	netip := *profile.Ip.IPNet
+	if netip.IP.To4() != nil {
+		netip.Mask = createMask(32)
+	} else {
+		netip.Mask = createMask(70)
+	}
+	return netip
 
+}
+
+func (u *Profile) BeforeCreate(db *gorm.DB) (err error) {
 	var count int64
 	db.Model(&Profile{}).Count(&count)
 	if count >= 99 {

@@ -15,4 +15,5 @@ func SetupMiddlewares(e *echo.Echo) {
 	e.Use(HandleError)
 	e.Use(GetIP)
 	e.Use(CheckBan)
+	e.Use(CheckAdmin)
 }

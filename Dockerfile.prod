@@ -2,7 +2,7 @@ FROM docker.io/golang:alpine AS b_100pfps-builder
 WORKDIR /app/
 ENV MODE=Release
 COPY . .
-RUN apk update && apk add vips-dev
+RUN apk update && apk add vips-dev gcc musl-dev
 RUN go build -o 100pfps main.go
 
 FROM docker.io/alpine:latest
@@ -14,7 +14,6 @@ RUN addgroup -g $UID $UNAME && adduser -D -u $GID -G $UNAME $UNAME
 USER $UNAME
 WORKDIR /app
 COPY --chown=$UID:$GID --from=b_100pfps-builder /app/100pfps /app/
-COPY --chown=$UID:$GID --from=b_100pfps-builder /app/views/ /app/views/
 RUN mkdir /app/imgs/ && chown $UID:$GID /app/imgs/
 VOLUME /app/imgs/
 ENTRYPOINT /app/100pfps

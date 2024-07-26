@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>100 PFPs</title>
-    <link rel="stylesheet" href="/public/styles.css">
+    <link rel="stylesheet" href="/static/styles.css">
     <style>
         body {
             display: flex;
@@ -21,6 +21,13 @@
         Welcome to 100 PFPs, feel free to post your own profile here<br>
         take care before you post anything, your profile is public and it will not be removable until the next round <a href="/details/">see details</a>
     </header>
+    
+    {{ $admin := index . "admin" }}
+    {{ $isAdmin := $admin | ne nil }}
+    {{ $adminRole := "" }}
+    {{ if $isAdmin }}
+        {{ $adminRole = $admin.GetRoleStr }}
+    {{ end }}
 
     <form class="filter">
         {{ $selected_tag := index . "tag" }}
@@ -36,13 +43,14 @@
         </select>
         <button>Filter!</button>
     </form>
+
     <div class="board">
         <label class="add-btn" for="form-profile__modal-toggle">+</label>
         {{ range $profile := index . "profiles" }}
         <div class="profile">
-            <img class="profile__img" src="data:image/webp;base64,{{ .Thumbnail | base64 }}" alt="">
+            <img class="profile__img" src="data:image/webp;base64,{{ $profile.Thumbnail | base64 }}" alt="">
             <div class="profile__info">
-                <img class="profile__info__img" src="data:image/webp;base64,{{ .Image | base64 }}" alt="">
+                <img class="profile__info__img" src="data:image/webp;base64,{{ $profile.Image | base64 }}" alt="">
                 <div class="profile__info__title">{{ $profile.Name | html }}</div>
                 <div class="profile__info__description">{{ $profile.Description | html }}</div>
                 <div class="profile__info__tags">
@@ -51,46 +59,102 @@
                     {{ end }}
                 </div>
             </div>
+
+            {{ if $isAdmin }}
+                <label class="form-profile__admin-actions__modal-label" for="form-profile{{ $profile.ID }}-admin-actions__modal-toggle"></label>
+            {{ end }}
         </div>
         {{ end }}
     </div>
 
-    <form class="modal form-profile" method="POST" enctype="multipart/form-data">
+    <form id="form-profile" class="modal" method="POST" action="/profile/create/" enctype="multipart/form-data">
         {{ $form := index . "form-profile-data" }}
         {{ $errors := index . "form-profile-errors" | valueOr strMap }}
         {{ $hasErrors := gt (len $errors) 0 }}
-        <input type="checkbox" name="form-profile__modal-toggle" id="form-profile__modal-toggle" {{ $hasErrors | ternary "checked" "" }}>
-        <div class="form-profile__title">Submit your profile</div>
-        <div class="form-profile__error-kind error-msg">{{ index $errors "kind" | html }}</div>
+        <input type="checkbox" class="modal-toggle" name="form-profile__modal-toggle" id="form-profile__modal-toggle" {{ $hasErrors | ternary "checked" "" }}>
+        <h2>Submit your profile</h2>
+        <div class="form__error-kind error-msg">{{ index $errors "kind" | html }}</div>
         <!-- <input type="text" name="ID" placeholder="id"> -->
-        <div class="form-profile__entry">
+        <div class="form__entry">
             <input type="text" placeholder="Name" name="name" value="{{ $form.Name | valueOrEmpty | html }}" required>
             <div class="error-msg">{{ index $errors "Name" | html }}</div>
         </div>
-        <div class="form-profile__entry">
+        <div class="form__entry">
             <textarea type="text" placeholder="Description" name="description" required>{{ $form.Description | valueOrEmpty | html }}</textarea>
             <div class="error-msg">{{ index $errors "Description" | html }}</div>
         </div>
 
-        <div class="form-profile__entry">
+        <div class="form__entry">
             <input placeholder="#tag1 #tag2 #tag3..." type="text" name="tags" value="{{ $form.Tags | valueOrEmpty | html }}" required>
             <div class="error-msg">{{ index $errors "Tags" | html }}</div>
         </div>
         
-        <div class="form-profile__entry form-profile__img">
+        <div id="form-profile__img" class="form__entry">
             <input type="file" name="img" accept="image/jpeg, image/png, image/webp" required>
             <div class="error-msg">{{ index $errors "Image" | html }}</div>
         </div>
 
-        <div class="form-profile__entry form-profile__terms">
+        <div id="form-profile__terms" class="form__entry">
             <input type="checkbox" name="rulesandprivacyaccepted" value="true" required> I accept <a href="/rules/">Rules</a> and <a href="/privacy/">Privacy Policy</a>
         </div>
 
-        <div class="form-profile__entry buttons">
-            <button class="form-profile__submit-btn" type="submit">Upload</button>
+        <div class="form__entry buttons">
+            <button id="form-profile__submit-btn" type="submit">Upload</button>
             <label class="btn form-profile__close" for="form-profile__modal-toggle">Close</label>
         </div>
     </form>
+    
+    {{ if $isAdmin }}
+        <div id="admin-mark">You're {{ $adminRole }}</div>
+        {{ range $profile := index . "profiles" }}
+            <div class="modal">
+                <img src="data:image/webp;base64,{{ $profile.Image | base64 }}" alt="">
+                <br>
+                <input type="checkbox" class="modal-toggle" id="form-profile{{ $profile.ID }}-admin-actions__modal-toggle">
+                <form action="/profile/delete/" method="post">
+                    <input name="id" value="{{ $profile.ID }}" type="hidden">
+                    <div class="form__entry">
+                        <button type="submit">Delete</button>
+                    </div>
+                </form>
+                {{ if ($adminRole | eq "Moderator") | or ($adminRole | eq "Owner") }}
+                    <form action="/profile/banip/" method="post">
+                        <input name="id" value="{{ $profile.ID }}" type="hidden">
+                        <div class="form__entry">
+                            <button type="submit">Delete & Ban IP</button>
+                        </div>
+                    </form>
+                {{ end }}
+                <div class="form__entry"><label class="btn" for="form-profile{{ $profile.ID }}-admin-actions__modal-toggle">Close</label></div>
+            </div>
+        {{ end }}
+
+        {{ if $adminRole | eq "Owner" }}
+            <label class="btn" for="form-create-admin__modal-toggle">Create Admin</label>
+            <form id="form-create-admin" class="modal" method="post" action="/admin/create/">
+                <h2>Create admin</h2>
+                <input type="checkbox" class="modal-toggle" id="form-create-admin__modal-toggle">
+                <div class="form__entry">
+                    <input type="text" name="user" placeholder="User">
+                </div>
+                <div class="form__entry">
+                    <input type="password" name="password" placeholder="Password">
+                </div>
+                <div class="form__entry">
+                    <select name="role">
+                        <option value="0">Owner</option>
+                        <option value="1">Moderator</option>
+                        <option value="2">Helper</option>
+                    </select>
+                </div>
+                <div class="buttons">
+                    <button>Create</button>
+                    <label class="btn" for="form-create-admin__modal-toggle">Close</label>
+                </div>
+            </form>
+        {{ end }}
+    {{ end }}
+
     <!-- <button class="add-btn">+</button> -->
     <div class="modal__shadow"></div>
 </body>

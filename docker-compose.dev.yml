@@ -16,6 +16,8 @@ services:
     environment:
       - DATABASE_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@100pfps-db-dev/${POSTGRES_DB}
       - MODE=${MODE}
+      - ADMIN_USER=${ADMIN_USER}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD}
     working_dir: /app/
     entrypoint: sh /app/dev.sh
     ports:

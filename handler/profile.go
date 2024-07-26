@@ -13,7 +13,7 @@ import (
 	"github.com/shawn-10x/100pfps/validators"
 )
 
-func GetBoard(c echo.Context) (err error) {
+func GetProfiles(c echo.Context) (err error) {
 	type Filter struct {
 		Tag *string `query:"tag" validate:"omitempty,max=15"`
 	}
@@ -35,10 +35,11 @@ func GetBoard(c echo.Context) (err error) {
 		"profiles": model.GetProfiles(filter.Tag),
 		"tags":     model.GetAvaliableTags(),
 		"tag":      filter.Tag,
+		"admin":    c.Get("admin").(*model.Admin),
 	})
 }
 
-func PostProfile(c echo.Context) (err error) {
+func CreateProfile(c echo.Context) (err error) {
 	type Form struct {
 		Name                    string `form:"name" validate:"required,max=20"`
 		Description             string `form:"description" validate:"required,max=100"`
@@ -85,21 +86,21 @@ func PostProfile(c echo.Context) (err error) {
 		})
 	}
 
-	finalImage, err_image := bimage.Process(bimg.Options{
+	finalImage, errImage := bimage.Process(bimg.Options{
 		Width:   100,
 		Height:  100,
 		Crop:    true,
 		Quality: 95,
 		Type:    bimg.WEBP,
 	})
-	thumbnail, err_thumbnail := bimage.Process(bimg.Options{
+	thumbnail, errThumbnail := bimage.Process(bimg.Options{
 		Width:   50,
 		Height:  50,
 		Crop:    true,
 		Quality: 100,
 		Type:    bimg.WEBP,
 	})
-	if err_image != nil || err_thumbnail != nil {
+	if errImage != nil || errThumbnail != nil {
 		return showErrors(utils.Ms{
 			"kind": "Error processing image",
 		})
@@ -118,6 +119,66 @@ func PostProfile(c echo.Context) (err error) {
 	}
 
 	profile.Insert()
+
+	return c.Redirect(http.StatusSeeOther, "/")
+}
+
+func DeleteProfile(c echo.Context) (err error) {
+	admin := c.Get("admin").(*model.Admin)
+	if admin == nil {
+		return c.Redirect(http.StatusSeeOther, "/")
+	}
+
+	type Form struct {
+		ID uint `form:"id" validate:"required"`
+	}
+
+	form := Form{}
+
+	if err = c.Bind(&form); err != nil {
+		return
+	}
+
+	if err := c.Validate(&form); err != nil {
+		return c.Redirect(http.StatusSeeOther, "/")
+	}
+
+	profile := model.GetProfile(form.ID)
+	if profile == nil {
+		return c.Redirect(http.StatusSeeOther, "/")
+	}
+
+	profile.Delete()
+
+	return c.Redirect(http.StatusSeeOther, "/")
+}
+
+func BanIP(c echo.Context) (err error) {
+	admin := c.Get("admin").(*model.Admin)
+	if admin == nil {
+		return c.Redirect(http.StatusSeeOther, "/")
+	}
+
+	type Form struct {
+		ID uint `form:"id" validate:"required"`
+	}
+
+	form := Form{}
+
+	if err = c.Bind(&form); err != nil {
+		return
+	}
+
+	if err := c.Validate(&form); err != nil {
+		return c.Redirect(http.StatusSeeOther, "/")
+	}
+	profile := model.GetProfile(form.ID)
+	if profile == nil {
+		return c.Redirect(http.StatusSeeOther, "/")
+	}
+
+	profile.Delete()
+	model.BanIP(profile.Ip.IPNet.IP)
 
 	return c.Redirect(http.StatusSeeOther, "/")
 }
