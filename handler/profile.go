@@ -155,7 +155,7 @@ func DeleteProfile(c echo.Context) (err error) {
 
 func BanIP(c echo.Context) (err error) {
 	admin := c.Get("admin").(*model.Admin)
-	if admin == nil {
+	if admin == nil || admin.Role == model.Helper {
 		return c.Redirect(http.StatusSeeOther, "/")
 	}
 

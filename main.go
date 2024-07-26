@@ -15,9 +15,17 @@ func main() {
 	db.Connect()
 	model.SetupMigrations()
 
+	admin_user := os.Getenv("ADMIN_USER")
+	if admin_user == "" {
+		panic("env ADMIN_USER not defined")
+	}
+	admin_password := os.Getenv("ADMIN_PASSWORD")
+	if admin_password == "" {
+		panic("env ADMIN_PASSWORD not defined")
+	}
 	admin := model.Admin{
-		User:     os.Getenv("ADMIN_USER"),
-		Password: os.Getenv("ADMIN_PASSWORD"),
+		User:     admin_user,
+		Password: admin_password,
 		Role:     model.Owner,
 	}
 	if err := admin.CreateIfNotExists(); err != nil {
