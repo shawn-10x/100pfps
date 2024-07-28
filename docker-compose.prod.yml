@@ -1,7 +1,7 @@
 services:
   100pfps:
-    image: 100pfps-prod
-    container_name: 100pfps-prod
+    image: 100pfps
+    container_name: 100pfps
     build: 
       dockerfile: ./Dockerfile.prod
       context: .
@@ -12,8 +12,10 @@ services:
       db:
         condition: service_healthy
     environment:
-      - MODE=Release
       - DATABASE_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@100pfps-db-prod/${POSTGRES_DB}
+      - MODE=${MODE}
+      - ADMIN_USER=${ADMIN_USER}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD}
     ports:
       - 8080:8080
 
