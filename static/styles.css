@@ -104,6 +104,9 @@ article {
     text-align: justify;
     text-wrap: wrap;
 }
+article h2 {
+    text-align: center;
+}
 nav {
     text-align: center;
     margin-bottom: 20px;
