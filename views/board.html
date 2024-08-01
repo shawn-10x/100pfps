@@ -3,10 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>100 PFPs</title>
+    
     <link rel="stylesheet" href="/static/styles.css">
-    <meta name="description" content="A passion project born as a lightweight, algorithm-free software that allows you to meet new people. There is a total of 100 profiles that can be displayed at all times.">
+    <link rel="shortcut icon" href="/static/favicon.png" type="image/png">
+    
+    {{ $title := "100 PFPs" }}
+    {{ $description := "A passion project born as a lightweight, algorithm-free software that allows you to meet new people. There is a total of 100 profiles that can be displayed at all times." }}
+    <title>{{ $title }}</title>
+    <meta name="description" content="{{ $description }}">
     <meta name="keywords" content="Social, Meet new people, Profile, Simple social platform, Keep it simple stupid">
+    <meta property="og:title" content="{{ $title }}">
+    <meta property="og:description" content="{{ $description }}">
+    <meta property="og:image" content="https://100pfps.xyz/static/favicon.png">
+    <meta property="og:url" content="https://100pfps.xyz/">
+    <meta property="og:type" content="website">
     <style>
         body {
             display: flex;

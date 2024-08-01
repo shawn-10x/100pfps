@@ -3,9 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Details - 100pfps</title>
-    <meta name="description" content="Details">
     <link rel="stylesheet" href="/static/styles.css">
+    
+    {{ $title := "Details - 100pfps" }}
+    {{ $description := "Details" }}
+    <title>{{ $title }}</title>
+    <meta name="description" content="{{ $description }}">
+    <meta name="keywords" content="Social, Meet new people, Profile, Simple social platform, Keep it simple stupid">
+    <meta property="og:title" content="{{ $title }}">
+    <meta property="og:description" content="{{ $description }}">
+    <meta property="og:image" content="https://100pfps.xyz/static/favicon.png">
+    <meta property="og:url" content="https://100pfps.xyz/details/">
+    <meta property="og:type" content="website">
 </head>
 <body>
     <header>
