@@ -291,6 +291,7 @@ a {
     overflow-y: auto;
     word-break: break-word;
     margin-top: 10px;
+    white-space: pre-wrap;
 }
 .profile-modal__tags {
     margin-top: 10px;
