@@ -17,7 +17,7 @@ type TagsAvaliable []struct {
 }
 
 func GetAvaliableTags() (tags_avaliable TagsAvaliable) {
-	db.GetDB().Model(&Tag{}).Select("name, count(profile_id)").Group("name").Scan(&tags_avaliable)
+	db.GetDB().Model(&Tag{}).Select("name, count(profile_id)").Group("name").Order("name").Scan(&tags_avaliable)
 	return
 }
 
