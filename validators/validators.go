@@ -33,15 +33,15 @@ func ValidationErrors(v_errors validator.ValidationErrors) utils.Ms {
 		case "required":
 			msg = "Missing field"
 		case "min":
-			msg = "Too short"
+			msg = "Too short, min is " + err.Param()
 		case "max":
-			msg = "Too long"
+			msg = "Too long, max is " + err.Param()
 		case "tags":
 			msg = "Invalid tags"
 		case "tags_max_count":
-			msg = "Too many tags"
+			msg = "Too many tags, max is " + err.Param()
 		case "tag_length":
-			msg = "Tag maximum length is " + err.Param()
+			msg = "Tag too long, max is " + err.Param()
 		default:
 			msg = "Invalid"
 			// fmt.Println("namespace", err.Namespace())

@@ -3,6 +3,7 @@ package handler
 import (
 	"net"
 	"net/http"
+	"strings"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/h2non/bimg"
@@ -42,7 +43,7 @@ func GetProfiles(c echo.Context) (err error) {
 func CreateProfile(c echo.Context) (err error) {
 	type Form struct {
 		Name                    string `form:"name" validate:"required,max=20"`
-		Description             string `form:"description" validate:"required,max=100"`
+		Description             string `form:"description" validate:"required,max=1000"`
 		Tags                    string `form:"tags" validate:"required,max=75,tags,tags_max_count=5,tag_length=15"`
 		RulesAndPrivacyAccepted bool   `form:"rulesandprivacyaccepted" validate:"required"`
 	}
@@ -112,7 +113,7 @@ func CreateProfile(c echo.Context) (err error) {
 	profile := model.Profile{
 		Name:        form.Name,
 		Description: form.Description,
-		Tags:        model.StrToTags(form.Tags),
+		Tags:        model.StrToTags(strings.ToLower(form.Tags)),
 		Ip:          ip,
 		Image:       finalImage,
 		Thumbnail:   thumbnail,

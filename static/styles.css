@@ -5,15 +5,35 @@
     --text-color: #ffe4d5;
     --green-color: #2dcc75;
     --error-color: #ff4848;
-    --link-color: #ef7db1;
-    --profile-size: 50px;
+    --main-color: #ef7db1;
     --font-size: 12pt;
-    --board-size: calc(var(--profile-size) * sqrt(100));
+    --board-width: 500px;
+    --body-padding: 0px;
+    --board-height: var(--board-width);
+    --profile-size: calc(var(--board-width) / 10);
     --border-radius: 5px;
+    --mobile-res: 600px;
 }
 @media only screen and (max-width: 600px) {
     :root {
-        --profile-size: 30px;
+        --body-padding: 20px;
+        --board-width: calc(100vw - var(--body-padding)*2);
+        --board-height: calc(100%);
+        --profile-size: calc(var(--board-width) / 7);
+    }
+    .board {
+        --padding: 0px !important;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+    .profile:hover .profile__tooltip {
+        display: none !important;
+    }
+    article {
+        width: 100% !important;
+    }
+    ul {
+        padding-left: 15px;
     }
 }
 body {
@@ -22,6 +42,7 @@ body {
     font-family: monospace;
     font-size: var(--font-size);
     margin: 0;
+    padding: var(--body-padding);
 }
 * {
     box-sizing: border-box;
@@ -31,7 +52,7 @@ input, textarea {
     color: var(--text-color);
     border: none;
     padding: 10px;
-    border-radius: 5px;
+    border-radius: var(--border-radius);
     outline: none;
     resize: none;
 }
@@ -39,7 +60,7 @@ button, input[type=file]::file-selector-button, .btn {
     background-color: var(--input-color);
     border: none;
     padding: 10px;
-    border-radius: 5px;
+    border-radius: var(--border-radius);
     cursor: pointer;
     color: var(--text-color);
     outline: none;
@@ -47,12 +68,13 @@ button, input[type=file]::file-selector-button, .btn {
     font-weight: bold;
     font-size: 10pt;
     font-family: monospace;
+    width: 100px;
 }
 select {
     background-color: var(--input-color);
     border: none;
     padding: 10px;
-    border-radius: 5px;
+    border-radius: var(--border-radius);
     cursor: pointer;
     color: var(--text-color);
     outline: none;
@@ -60,6 +82,9 @@ select {
     font-weight: bold;
     font-size: 10pt;
     text-align: left;
+}
+img {
+    border-radius: var(--border-radius);
 }
 input[type=file] {
     background: transparent;
@@ -84,7 +109,7 @@ nav {
     margin-bottom: 20px;
 }
 a {
-    color: var(--link-color);
+    color: var(--main-color);
 }
 
 .navbar span::after {
@@ -98,12 +123,13 @@ a {
     display: flex;
     flex-wrap: wrap;
     align-content: baseline;
-    width: calc(var(--board-size) + var(--padding)*2);
-    height: calc(var(--board-size) + var(--padding)*2);
+    width: calc(var(--board-width) + var(--padding)*2);
+    height: calc(var(--board-height) + var(--padding)*2);
+    max-height: calc(var(--board-height) + var(--padding)*2);
     background-color: var(--block-color);
     border-radius: var(--border-radius);
     padding: var(--padding);
-    margin: 20px;
+    margin-top: 20px;
 }
 
 .profile {
@@ -112,17 +138,16 @@ a {
     height: var(--profile-size);
     position: relative;
     display: flex;
-    
 }
 .profile__img {
     width: 100%;
     height: 100%;
     border-radius: var(--border-radius);
 }
-.profile__info {
+.profile__tooltip {
     display: none;
 }
-.profile:hover .profile__info {
+.profile:hover .profile__tooltip {
     display: block;
     position: absolute;
     top: 25px;
@@ -133,12 +158,8 @@ a {
     pointer-events: none;
     border-radius: var(--border-radius);
     padding: 20px;
-
-}
-.profile__info__img {
-    width: 100px;
-    height: 100px;
-    border-radius: var(--border-radius);
+    height: 210px;
+    overflow: hidden;
 }
 .modal {
     background-color: var(--block-color);
@@ -156,9 +177,14 @@ a {
     font-size: 9pt;
     overflow: hidden;
 }
-.modal h2 {
+.modal h2 { 
+    text-align: center; 
     margin: 0;
-    text-align: center;
+}
+.modal > * {
+    margin-bottom: 0px;
+    margin-top: 10px;
+    width: auto;
 }
 .modal__shadow {
     position: fixed;
@@ -183,19 +209,12 @@ a {
 #form-profile {
     width: 330px;
 }
-#form-profile__title {
-    font-size: 15pt;
-    font-weight: bold;
-    align-self: center;
-    margin-bottom: 10px;
-    text-align: center;
-}
 .form__error-kind {
-    text-align: center;
+    align-self: center;
 }
 .form__entry {
     width: 100%;
-    padding: 10px;
+    margin-top: 20px;
 }
 .form__entry .error-msg {
     margin-left: 10px;
@@ -210,15 +229,15 @@ a {
 #form-profile__terms {
     text-align: center;
 }
-#form-profile__submit-btn {
-    background-color: var(--green-color);
+.active-btn {
+    background-color: var(--main-color);
     font-weight: bold;
     align-self: center;
 }
 .error-msg {
     color: var(--error-color);
+    margin-top: 0px;
     font-size: 10pt;
-    align-self: flex-start;
 }
 .add-btn {
     background-color: var(--input-color);
@@ -237,11 +256,8 @@ a {
     display: flex;
     justify-content: center;
 }
-.buttons > button, .buttons > .btn {
-    margin-left: 5px;
-    margin-right: 5px;
-    width: 80px;
-}
+.buttons > button:first-child, .buttons > .btn:first-child { margin-right: 5px; }
+.buttons > button:last-child, .buttons > .btn:last-child { margin-left: 5px; }
 #banned {
     color: var(--error-color);
 }
@@ -251,7 +267,7 @@ a {
     left: 0;
     font-weight: bold;
 }
-.form-profile__admin-actions__modal-label {
+.modal-profile__label {
     position: absolute;
     top: 0;
     left: 0;
@@ -260,7 +276,43 @@ a {
     z-index: 1;
     cursor: pointer;
 }
+.profile__tooltip h2 {
+    margin: 0;
+}
 
+.profile-modal {
+    width: 300px;
+}
+.profile-modal__img {
+    align-self: center;
+}
+.profile-modal__description {
+    height: 75px;
+    overflow-y: auto;
+    word-break: break-word;
+    margin-top: 10px;
+}
+.profile-modal__tags {
+    margin-top: 10px;
+}
+.profile-modal__tag {
+    background-color: var(--input-color);
+    border-radius: var(--border-radius);
+    padding: 5px;
+    margin: 2px;
+    display: inline-block;
+}
+.profile-modal > form > button {
+    width: 100%;
+}
+#form-profile__description textarea {
+    height: 100px;
+}
+.profile__tooltip__description {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
 
 #form-admin__signin {
     display: block;
