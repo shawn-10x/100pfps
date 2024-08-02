@@ -1,2 +1,2 @@
 FROM docker.io/golang:alpine
-RUN apk update && apk add vips-dev gcc musl-dev
+RUN apk update && apk add --no-cache vips-dev gcc musl-dev
