@@ -24,11 +24,11 @@ type Profile struct {
 func GetProfiles(tag *string) (profiles []Profile) {
 	tx := db.GetDB()
 	if tag == nil || *tag == "any" {
-		tx = tx.Preload("Tags").Find(&profiles)
+		tx = tx.Find(&profiles)
 	} else {
 		tx = tx.Joins("JOIN tags ON tags.profile_id = profiles.id AND tags.name = ?", *tag)
 	}
-	tx.Order("id DESC").Find(&profiles)
+	tx.Preload("Tags").Order("id DESC").Find(&profiles)
 	return
 }
 
